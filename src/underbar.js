@@ -211,13 +211,15 @@
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
     return _.reduce(collection, function(allTrue, item) {
+    		//conditional to check if there is no iterator, but no specifics were given about what to test in that case
     		if (iterator == undefined) {
-    			if (!item) {
-    				return false;
+    			iterator = function(item) {
+    				if (!item) return false;
+    				return true;
     			}
     		}
 
-    		else if (!iterator(item)) {
+    		if (!iterator(item)) {
     			return false;
     		}
     	return allTrue;
@@ -228,6 +230,22 @@
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    // TODO: could not get every() implementation to work
+    return _.reduce(collection, function(noTrue, item) {
+    		//conditional to check if there is no iterator, but no specifics were given about what to test in that case
+    		if (iterator == undefined) {
+    			iterator = function(item) {
+    				if (!item) return false;
+    				return true;
+    			}
+    		}
+
+    		if (iterator(item)) {
+    			return true;
+    		}
+    	return noTrue;
+    	}, false);
+    
   };
 
 
@@ -250,11 +268,39 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+  	if (obj === Object(obj)) {
+  		//check if it's an object first
+  		//http://stackoverflow.com/questions/8511281/check-if-a-value-is-an-object-in-javascript (source)
+  		for (var i = 1; i < arguments.length; i++) {
+  		//starts at 1 because index 0 should be object to extend
+	  		if (arguments[i] === Object(arguments[i])) {
+	  			for (var key in arguments[i]) {
+	  				obj[key] = arguments[i][key];
+	  			}
+  			}
+  		}
+  	}  	
+  	return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+  	if (obj === Object(obj)) {
+  		//check if it's an object first
+  		//http://stackoverflow.com/questions/8511281/check-if-a-value-is-an-object-in-javascript (source)
+  		for (var i = 1; i < arguments.length; i++) {
+  		//starts at 1 because index 0 should be object to extend
+	  		if (arguments[i] === Object(arguments[i])) {
+	  			for (var key in arguments[i]) {
+	  				if (obj[key] == undefined) {
+	  					//check to see property does not exist
+	  					obj[key] = arguments[i][key];
+	  			}	}
+  			}
+  		}
+  	}  	
+  	return obj;
   };
 
 
